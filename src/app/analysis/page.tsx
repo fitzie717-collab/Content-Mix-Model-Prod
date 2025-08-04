@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
+} from "@/components/ui/card";
 import {
   Area,
   AreaChart,
@@ -45,7 +45,7 @@ import {
   AlertCircle,
   Link as LinkIcon
 } from "lucide-react";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../../components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -254,19 +254,15 @@ export default function CommandCenterPage() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
 
-  // Simulate data fetching and handle client-side state
   useEffect(() => {
-      setIsLoading(true);
-      setError(null);
+    setIsLoading(true);
+    setError(null);
+    const timer = setTimeout(() => {
+      setHasData(true);
+      setIsLoading(false);
       setLastUpdated(new Date().toLocaleString());
-
-      const timer = setTimeout(() => {
-          // To test states, you can change these values
-          setHasData(true); 
-          setIsLoading(false);
-          // setError("Failed to load creative DNA data.");
-      }, 1500);
-      return () => clearTimeout(timer);
+    }, 1500);
+    return () => clearTimeout(timer);
   }, [date, activeComparison]);
 
   
@@ -600,7 +596,3 @@ const WaterfallLabel = (props: any) => {
         </text>
     );
 };
-
-    
-
-    

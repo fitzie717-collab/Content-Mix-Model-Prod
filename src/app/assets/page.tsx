@@ -3,14 +3,14 @@
 
 import { useState, useEffect, ChangeEvent, useMemo } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -26,28 +26,28 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../components/ui/dialog";
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
-import { Asset, AssetStatus, AssetContentType } from "../../lib/firebase/firestoreService";
-import { DUMMY_ASSETS } from "../../lib/dummy-data";
-import { analyzeAsset, AssetAnalysisOutput, analyzeBrandSafety, BrandSafetyOutput } from "../../ai";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Asset, AssetStatus, AssetContentType } from "@/lib/firebase/firestoreService";
+import { DUMMY_ASSETS } from "@/lib/dummy-data";
+import { analyzeAsset, type AssetAnalysisOutput, analyzeBrandSafety, type BrandSafetyOutput } from "@/ai";
 import { LoaderCircle, CheckCircle, FileEdit, AlertTriangle, Search, ListFilter, PlusCircle, Lightbulb, Copy, Check } from "lucide-react";
-import { Badge } from "../../components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
-import { Progress } from "../../components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
-import { Slider } from "../../components/ui/slider";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip";
-import { cn } from "../../lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 type CombinedAnalysisData = AssetAnalysisOutput & BrandSafetyOutput;
 

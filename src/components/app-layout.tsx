@@ -12,8 +12,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
-} from "./ui/sidebar";
-import { Activity, BarChart, LayoutDashboard, Link as LinkIcon, Tags, Users, CalendarDays } from "lucide-react";
+} from "@/components/ui/sidebar";
+import { Activity, BarChart, LayoutDashboard, Link as LinkIcon, Tags, Users, CalendarDays, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -68,6 +68,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton
+                    asChild
+                    isActive={pathname === "/buying"}
+                    tooltip="Media Buying"
+                >
+                    <Link href="/buying">
+                        <ShoppingCart />
+                        <span>Media Buying</span>
+                    </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
@@ -111,5 +123,3 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     </SidebarProvider>
   );
 }
-
-    
