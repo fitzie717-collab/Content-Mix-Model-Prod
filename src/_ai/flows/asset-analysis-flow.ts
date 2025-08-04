@@ -71,5 +71,3 @@ const assetAnalysisFlow = ai.defineFlow(
 export async function analyzeAsset(input: AssetAnalysisInput): Promise<AssetAnalysisOutput> {
   return assetAnalysisFlow(input);
 }
-
-    

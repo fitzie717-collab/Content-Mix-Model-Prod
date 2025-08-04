@@ -26,5 +26,3 @@ export const BrandSafetyOutputSchema = z.object({
   }),
 });
 export type BrandSafetyOutput = z.infer<typeof BrandSafetyOutputSchema>;
-
-    

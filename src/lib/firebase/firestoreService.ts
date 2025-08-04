@@ -97,5 +97,3 @@ export const getAssets = async (): Promise<Asset[]> => {
   });
   return assets;
 };
-
-    

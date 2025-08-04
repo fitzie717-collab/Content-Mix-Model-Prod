@@ -55,5 +55,3 @@ const brandSafetyAnalysisFlow = ai.defineFlow(
 export async function analyzeBrandSafety(input: BrandSafetyInput): Promise<BrandSafetyOutput> {
   return brandSafetyAnalysisFlow(input);
 }
-
-    

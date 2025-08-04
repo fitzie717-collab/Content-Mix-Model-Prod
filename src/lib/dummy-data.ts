@@ -148,5 +148,3 @@ export const DUMMY_ASSETS: Asset[] = [
     cpa: 52,
   },
 ];
-
-    

@@ -97,5 +97,3 @@ export const AssetAnalysisOutputSchema = z.object({
 });
 
 export type AssetAnalysisOutput = z.infer<typeof AssetAnalysisOutputSchema>;
-
-    
