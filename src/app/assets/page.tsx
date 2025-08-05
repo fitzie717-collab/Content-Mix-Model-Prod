@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -40,7 +41,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Asset, AssetStatus, AssetContentType } from "@/lib/firebase/firestoreService";
 import { DUMMY_ASSETS } from "@/lib/dummy-data";
 import { analyzeAsset, type AssetAnalysisOutput, analyzeBrandSafety, type BrandSafetyOutput } from "@/ai";
-import { LoaderCircle, CheckCircle, FileEdit, AlertTriangle, Search, ListFilter, PlusCircle, Lightbulb, Copy, Check } from "lucide-react";
+import { LoaderCircle, CheckCircle, FileEdit, AlertTriangle, Search, ListFilter, PlusCircle, Lightbulb, Copy, Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
@@ -49,7 +50,15 @@ import { Slider } from "@/components/ui/slider";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-type CombinedAnalysisData = AssetAnalysisOutput & BrandSafetyOutput;
+type CombinedAnalysisData = AssetAnalysisOutput & BrandSafetyOutput & {
+  manualData?: {
+    campaignName?: string;
+    creativeAgencyName?: string;
+    endorsementType?: string;
+    narratorType?: string;
+  }
+};
+
 
 const getStatusVariant = (status?: AssetStatus) => {
   switch (status) {
@@ -110,6 +119,8 @@ const CopyableId = ({ id }: { id: string }) => {
 export default function AssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isAnalysisDialogOpen, setIsAnalysisDialogOpen] = useState(false);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [selectedAssetForDetails, setSelectedAssetForDetails] = useState<Asset | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -119,7 +130,7 @@ export default function AssetsPage() {
   const [statusSearch, setStatusSearch] = useState("");
   const [contentTypeSearch, setContentTypeSearch] = useState("");
   
-  const methods = useForm<CombinedAnalysisData & {manualData: any}>();
+  const methods = useForm<CombinedAnalysisData>();
 
   useEffect(() => {
     setAssets(DUMMY_ASSETS);
@@ -182,11 +193,11 @@ export default function AssetsPage() {
     const newAsset: Asset = {
       id: `new-${Date.now()}`,
       name: selectedFile.name,
-      creator: finalData.manualData.creativeAgencyName || 'N/A',
+      creator: finalData.manualData?.creativeAgencyName || 'N/A',
       type: selectedFile.type.startsWith('video') ? 'Video' : selectedFile.type.startsWith('image') ? 'Image' : 'Audio',
       length: 'N/A', 
       tags: "AI Analyzed",
-      campaign: finalData.manualData.campaignName || 'New Campaign',
+      campaign: finalData.manualData?.campaignName || 'New Campaign',
       creationDate: new Date().toISOString().split('T')[0],
       contentSnId: `NEW-ASSET-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
       daypart: 'N/A',
@@ -195,6 +206,8 @@ export default function AssetsPage() {
       brand: finalData.brand,
       product: finalData.product,
       brandSafety: finalData.brandSafety,
+      analysis: finalData.analysis,
+      mlReadyFeatures: finalData.mlReadyFeatures,
       status: 'New',
       contentType: 'Branded',
       thumbnail: preview || 'https://placehold.co/40x40.png'
@@ -226,6 +239,11 @@ export default function AssetsPage() {
         ? prev.filter(item => item !== status) 
         : [...prev, status]
     );
+  };
+  
+  const handleRowClick = (asset: Asset) => {
+    setSelectedAssetForDetails(asset);
+    setIsDetailsDialogOpen(true);
   };
 
   const renderFeatureWithOverride = (
@@ -462,6 +480,66 @@ export default function AssetsPage() {
             </FormProvider>
           </DialogContent>
       </Dialog>
+      
+      {selectedAssetForDetails && (
+        <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+            <DialogContent className="sm:max-w-xl">
+                 <DialogHeader>
+                    <DialogTitle>{selectedAssetForDetails.name}</DialogTitle>
+                    <DialogDescription>
+                      Detailed analysis for asset ID: {selectedAssetForDetails.contentSnId}
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base">Brand Safety</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-sm space-y-2">
+                           <div className="flex items-center gap-2">
+                             {selectedAssetForDetails.brandSafety?.isSafe 
+                               ? <CheckCircle className="h-5 w-5 text-green-500" />
+                               : <AlertTriangle className="h-5 w-5 text-destructive" />
+                             }
+                             <p>Status: <span className={cn(selectedAssetForDetails.brandSafety?.isSafe ? 'text-green-600' : 'text-destructive', "font-semibold")}>{selectedAssetForDetails.brandSafety?.isSafe ? 'Safe' : 'Needs Review'}</span></p>
+                           </div>
+                           {!selectedAssetForDetails.brandSafety?.isSafe && (
+                             <>
+                                <p>Flags: {selectedAssetForDetails.brandSafety?.flags.join(', ')}</p>
+                                <p>Reasoning: {selectedAssetForDetails.brandSafety?.reasoning}</p>
+                             </>
+                           )}
+                        </CardContent>
+                    </Card>
+                    <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="qualitative-analysis">
+                            <AccordionTrigger>Qualitative Analysis</AccordionTrigger>
+                            <AccordionContent>
+                                {selectedAssetForDetails.analysis ? (
+                                    <div className="space-y-2 text-sm">
+                                        {Object.entries(selectedAssetForDetails.analysis).map(([category, features]) => (
+                                            <div key={category}>
+                                                <h4 className="font-semibold capitalize">{category.replace(/([A-Z])/g, ' $1')}</h4>
+                                                <ul className="list-disc pl-5 text-muted-foreground">
+                                                    {Object.entries(features).map(([feature, data]) => (
+                                                        <li key={feature}>{feature.replace(/([A-Z])/g, ' $1')}: <span className="font-medium text-foreground">{String(data.determination)}</span></li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : <p className="text-sm text-muted-foreground">No detailed analysis available for this asset.</p>}
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+
+                </div>
+                 <DialogFooter>
+                    <Button onClick={() => setIsDetailsDialogOpen(false)}>Close</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+      )}
 
 
       <Card>
@@ -560,7 +638,7 @@ export default function AssetsPage() {
             </TableHeader>
             <TableBody>
               {filteredAssets.map((asset) => (
-                <TableRow key={asset.id}>
+                <TableRow key={asset.id} onClick={() => handleRowClick(asset)} className="cursor-pointer">
                    <TableCell>
                      <div className="flex items-center gap-3">
                         <Avatar>
@@ -594,12 +672,14 @@ export default function AssetsPage() {
                   </TableCell>
                   <TableCell className="text-center">
                      <Tooltip>
-                        <TooltipTrigger>
-                           {asset.brandSafety && !asset.brandSafety.isSafe ? (
-                              <AlertTriangle className="h-5 w-5 text-destructive" />
-                           ) : (
-                              <CheckCircle className="h-5 w-5 text-green-500" />
-                           )}
+                        <TooltipTrigger asChild>
+                           <div onClick={(e) => e.stopPropagation()}>
+                               {asset.brandSafety && !asset.brandSafety.isSafe ? (
+                                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                               ) : (
+                                  <CheckCircle className="h-5 w-5 text-green-500" />
+                               )}
+                           </div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="font-semibold">Brand Safety Analysis</p>

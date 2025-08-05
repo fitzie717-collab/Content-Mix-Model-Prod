@@ -26,6 +26,31 @@ export const DUMMY_ASSETS: Asset[] = [
     roas: 8.5,
     spend: 1200,
     cpa: 15,
+    analysis: {
+      "messageStrategy": {
+        "hasSingleMessageFocus": { "determination": true, "confidenceScore": 0.95, "reasoning": "The ad consistently focuses on the cleaning power of the soap." },
+        "messageComplexity": { "determination": "Simple", "confidenceScore": 0.98, "reasoning": "The message is direct and easy to understand." },
+        "usesRightBrainElements": { "determination": false, "confidenceScore": 0.9, "reasoning": "The ad is feature-focused rather than story-driven." }
+      },
+      "execution": {
+        "musicProminentlyFeatured": { "determination": true, "confidenceScore": 1, "reasoning": "Upbeat music plays throughout the ad." },
+        "isEmotionalStorytelling": { "determination": false, "confidenceScore": 0.95, "reasoning": "The ad uses a direct-response approach." },
+        "usesHumor": { "determination": false, "confidenceScore": 1, "reasoning": "The tone is informative, not humorous." },
+        "pacing": { "determination": "Appropriate", "confidenceScore": 0.85, "reasoning": "The pacing matches the energetic music and keeps the viewer engaged." }
+      },
+      "emotionalImpact": {
+        "isEmotionDriven": { "determination": false, "confidenceScore": 0.8, "reasoning": "The ad appeals to logic (cleanliness) more than emotion." },
+        "primaryEmotion": { "determination": "Trust", "confidenceScore": 0.75, "reasoning": "The ad aims to build trust in the product's effectiveness." },
+        "hasPositiveTone": { "determination": true, "confidenceScore": 1, "reasoning": "The overall tone is positive and upbeat." }
+      },
+      "performance": {
+        "hasAttentionGrabbingIntro": { "determination": true, "confidenceScore": 0.9, "reasoning": "The ad opens with a dynamic shot of the product in use." },
+        "creativeNovelty": { "determination": "Formulaic", "confidenceScore": 0.8, "reasoning": "The ad follows a standard template for cleaning product commercials." },
+        "brandFitScore": { "determination": 5, "confidenceScore": 0.9, "reasoning": "The creative aligns perfectly with a classic CPG brand identity." },
+        "hasClearCallToAction": { "determination": "Clear", "confidenceScore": 1, "reasoning": "The ad clearly directs viewers to find the product in stores." },
+        "targetAudienceAlignmentScore": { "determination": 4, "confidenceScore": 0.8, "reasoning": "The ad is well-aligned for its target demographic of household consumers." }
+      }
+    }
   },
   {
     id: uuidv4(),

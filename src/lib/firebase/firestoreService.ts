@@ -4,6 +4,7 @@
 import { db } from './client';
 import { collection, addDoc, getDocs, serverTimestamp, Timestamp, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
+import type { AssetAnalysisOutput } from '@/ai';
 
 export interface BrandSafetyData {
   isSafe: boolean;
@@ -14,7 +15,7 @@ export interface BrandSafetyData {
 export type AssetStatus = 'New' | 'In Review' | 'Approved' | 'Rejected' | 'Ready for Publisher' | 'Picked Up';
 export type AssetContentType = 'Branded' | 'Endorsed' | 'UGC' | 'Mixed' | 'N/A';
 
-export interface Asset {
+export interface Asset extends Partial<AssetAnalysisOutput> {
   id?: string;
   creator: string;
   type: 'Video' | 'Image' | 'Blog Post' | 'Audio' | string;
@@ -88,6 +89,8 @@ export const getAssets = async (): Promise<Asset[]> => {
       brand: data.brand,
       product: data.product,
       brandSafety: data.brandSafety,
+      analysis: data.analysis,
+      mlReadyFeatures: data.mlReadyFeatures,
       status: data.status,
       contentType: data.contentType,
       thumbnail: data.thumbnail,
